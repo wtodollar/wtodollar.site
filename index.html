@@ -2,163 +2,207 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WTOdollar - Pro Trading Platform</title>
+<title>Deriv Clone - WTOdollar PRO</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{background:#0b1015;color:#e6f0ff;font-family:Inter,system-ui,sans-serif}
-.header{background:linear-gradient(90deg,#0e1a24,#102a25);padding:18px 16px;border-bottom:2px solid #00d091;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.header h1{color:#00d091;font-size:28px}.header .bal{font-size:14px;text-align:right}
-.header .bal b{color:#00d091;font-size:18px;display:block}
-.nav{position:sticky;top:0;z-index:10;background:#111a23;display:flex;gap:6px;padding:10px;overflow-x:auto;border-bottom:1px solid #1e2d3d;white-space:nowrap}
-.nav button{background:#1a2836;color:#8da0b6;border:1px solid #263a4f;padding:8px 12px;border-radius:20px;font-weight:700;font-size:12px;cursor:pointer}
-.nav button.active{background:#00d091;color:#000;border-color:#00d091}
-.card{background:#141e2a;border-radius:16px;padding:16px;margin:12px;border:1px solid #223145}
-.card h2{color:#00d091;font-size:18px;margin-bottom:10px;display:flex;justify-content:space-between}
-.card h3{color:#9fb0c3;font-size:14px;margin:12px 0 6px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-input,select{width:100%;background:#0b1118;color:#fff;border:1px solid #2a3c52;border-radius:10px;padding:11px;font-size:14px;margin-bottom:10px}
-.price-big{font-size:36px;font-weight:900;color:#fff;letter-spacing:1px}
-.small{font-size:11px;color:#7d8ea3;line-height:1.4}
-.btn{border:none;padding:11px;border-radius:10px;font-weight:800;width:100%;cursor:pointer;font-size:13px}
-.btn-green{background:#00d091;color:#000}.btn-red{background:#ff4757;color:#fff}.btn-blue{background:#2d86ff;color:#fff}.btn-dark{background:#1e2e42;color:#cfe0f5}.btn-ghost{background:transparent;border:1px solid #2a3c52;color:#8da0b6}
-.tab-content{display:none}.tab-content.active{display:block}
-.badge{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:800}
-.badge-green{background:#00d09122;color:#00d091}.badge-red{background:#ff475722;color:#ff6b7a}.badge-blue{background:#2d86ff22;color:#6aa9ff}
-#tickChart{width:100%;height:140px;background:#0b1118;border-radius:10px;border:1px solid #1e2d3d}
-#log{background:#000;color:#00ff88;border-radius:10px;padding:8px;height:120px;overflow-y:auto;font-size:10px;white-space:pre-wrap;margin-top:10px}
-.bot-card{border:1px dashed #2a3c52;border-radius:10px;padding:10px;margin:6px 0;background:#0f1821}
-.switch{display:flex;align-items:center;gap:8px;margin:6px 0}
-.switch input{width:18px;height:18px}
-table{width:100%;font-size:12px;border-collapse:collapse}
-th{color:#7d8ea3;text-align:left;padding:6px;border-bottom:1px solid #223145}
-td{padding:6px;border-bottom:1px solid #1a2836}
-.ksh{color:#ffd86e}
-optgroup{color:#00d091;background:#0b1015;font-weight:800}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0e0e0e;color:#fff;font-family:Ubuntu,Arial,sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.topbar{height:48px;background:#151515;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.logo{color:#ff444f;font-weight:900;font-size:18px;letter-spacing:0.5px}
+.top-right{display:flex;align-items:center;gap:12px}
+.bal-box{background:#232323;padding:6px 12px;border-radius:6px;text-align:right;min-width:120px}
+.bal-usd{color:#fff;font-weight:800;font-size:13px}.bal-ksh{color:#ffa500;font-size:11px}
+.btn-login{background:#ff444f;color:#fff;border:none;padding:6px 14px;border-radius:4px;font-weight:700;font-size:12px;cursor:pointer}
+.btn-logout{background:#333;color:#ccc;border:none;padding:6px 10px;border-radius:4px;font-size:11px;cursor:pointer;margin-left:4px}
+.main{display:flex;flex:1;overflow:hidden}
+.left{width:200px;background:#151515;border-right:1px solid #2a2a2a;overflow-y:auto;padding:8px}
+.left h3{color:#999;font-size:10px;text-transform:uppercase;margin:12px 0 6px;letter-spacing:0.8px}
+.market-item{padding:8px 8px;border-radius:4px;font-size:12px;cursor:pointer;color:#ccc;display:flex;justify-content:space-between}
+.market-item:hover{background:#232323;color:#fff}
+.market-item.active{background:#2a2a2a;color:#ff444f;border-left:3px solid #ff444f}
+.center{flex:1;display:flex;flex-direction:column;background:#0e0e0e}
+.chart-top{height:36px;background:#151515;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;padding:0 12px;gap:12px;font-size:12px}
+.chart-top select{background:#232323;color:#fff;border:1px solid #333;border-radius:4px;padding:4px 8px;font-size:11px}
+#chart{flex:1;background:#0e0e0e}
+.positions{height:140px;background:#151515;border-top:1px solid #2a2a2a;overflow-y:auto;padding:6px}
+.positions h4{font-size:11px;color:#999;margin-bottom:4px}
+table{width:100%;font-size:11px;border-collapse:collapse}
+th{color:#666;text-align:left;padding:4px;border-bottom:1px solid #232323}
+td{padding:4px;border-bottom:1px solid #1a1a1a}
+.right{width:280px;background:#151515;border-left:1px solid #2a2a2a;display:flex;flex-direction:column;overflow-y:auto}
+.right-tabs{display:flex;background:#0e0e0e;border-bottom:1px solid #2a2a2a}
+.right-tabs button{flex:1;background:transparent;border:none;color:#999;padding:8px 4px;font-size:10px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent}
+.right-tabs button.active{color:#fff;border-bottom-color:#ff444f}
+.right-content{padding:12px}
+.label{font-size:10px;color:#999;margin:8px 0 4px;text-transform:uppercase}
+.input{width:100%;background:#232323;border:1px solid #333;color:#fff;padding:8px;border-radius:4px;font-size:12px;margin-bottom:8px}
+.select{width:100%;background:#232323;border:1px solid #333;color:#fff;padding:8px;border-radius:4px;font-size:12px;margin-bottom:8px}
+.btn{width:100%;border:none;padding:10px;border-radius:4px;font-weight:800;font-size:12px;cursor:pointer;margin-top:6px}
+.btn-green{background:#4bb4b3;color:#fff}
+.btn-red{background:#ff444f;color:#fff}
+.btn-blue{background:#2a9d8f;color:#fff}
+.btn-dark{background:#232323;color:#ccc;border:1px solid #333}
+.small{font-size:10px;color:#777;line-height:1.3;margin-top:4px}
+.divider{height:1px;background:#232323;margin:10px 0}
+.badge{padding:2px 6px;border-radius:10px;font-size:9px;font-weight:800}
+.badge-green{background:#4bb4b322;color:#4bb4b3}
+.badge-red{background:#ff444f22;color:#ff6b7a}
+#log{background:#000;color:#4bb4b3;padding:6px;border-radius:4px;height:80px;overflow-y:auto;font-size:9px;white-space:pre-wrap;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:768px){.left{display:none}.right{width:100%;position:absolute;bottom:0;height:60%;z-index:20;border-top:2px solid #ff444f}.main{flex-direction:column}}
 </style>
 </head>
 <body>
-<div class="header">
-<div><h1>WTOdollar.site PRO</h1><span class="small">AI • Bots • Copy • Bulk • Analysis</span></div>
-<div class="bal">
-<span class="small" id="loginId">Not logged in</span>
-<b id="usdBal">-- USD</b>
-<b id="kshBal" class="ksh">-- KSH</b>
-<span class="small">Rate: <span id="rate">130</span> KSH/USD</span>
+<div class="topbar">
+<div class="logo">deriv <span style="color:#fff;font-weight:400">| WTOdollar PRO</span></div>
+<div class="top-right">
+<div class="bal-box"><div class="bal-usd" id="usdBal">-- USD</div><div class="bal-ksh" id="kshBal">-- KSH</div><div class="small" id="loginId" style="margin:0">Not logged</div></div>
+<button class="btn-login" onclick="showTab('account')">Account</button>
+<button class="btn-logout" onclick="logout()">Logout</button>
 </div>
 </div>
+<div class="main">
+<div class="left">
+<h3>Volatilities (1s) NEW</h3>
+<div id="marketList"></div>
+<h3>Account</h3>
+<div class="market-item" onclick="showRight('account')">🔑 Login / Token</div>
+<div class="market-item" onclick="showRight('analysis')">📊 Analysis (RSI+SMA)</div>
+<div class="market-item" onclick="showRight('aiscan')">🤖 AI Scanner</div>
+<div class="market-item" onclick="showRight('auto')">⚡ Auto Trade</div>
+<div class="market-item" onclick="showRight('bots')">🧩 Free Bots</div>
+<div class="market-item" onclick="showRight('copy')">👥 Copy Trading</div>
+<div class="market-item" onclick="showRight('bulk')">📦 Bulk Trading</div>
+<div class="small" style="padding:8px">Rate: <span id="rate">130</span> KSH/USD | All binary types included</div>
+</div>
+<div class="center">
+<div class="chart-top">
+<span id="symbolName" style="font-weight:800;color:#ff444f">Volatility 75 Index</span>
+<span id="price" style="font-weight:900;font-size:14px">---</span>
+<span id="priceChange" class="badge badge-green">Live</span>
+<select id="chartType"><option value="line">Line (Ticks)</option><option value="candle">Candles (1min)</option></select>
+<select id="marketSelectTop"></select>
+</div>
+<div id="chart"></div>
+<div class="positions">
+<h4>Open Positions <button onclick="fetchOpenPositions()" style="background:#232323;color:#ccc;border:none;padding:2px 6px;border-radius:3px;font-size:9px;margin-left:8px;cursor:pointer">Refresh</button> | <span id="pnlTotal" style="color:#4bb4b3">Total P/L: --</span></h4>
+<table id="openTable"><tr><th>ID</th><th>Type</th><th>Symbol</th><th>Buy</th><th>Profit</th><th>KSH</th></tr></table>
+</div>
+</div>
+<div class="right">
+<div class="right-tabs">
+<button id="rt-trade" class="active" onclick="showRight('trade')">Trade</button>
+<button id="rt-account" onclick="showRight('account')">Account</button>
+<button id="rt-pro" onclick="showRight('analysis')">PRO Tools</button>
+</div>
+<div class="right-content">
+<!-- TRADE TAB (Deriv style) -->
+<div id="right-trade" class="right-tab">
+<div class="label">Market</div><select id="marketSelect" class="select"></select>
+<div class="label">Trade Type - ALL Binary Options</div>
+<select id="contractType" class="select">
+<optgroup label="Rise/Fall">
+<option value="CALL">Rise</option><option value="PUT">Fall</option><option value="CALL_H">Higher</option><option value="PUT_L">Lower</option>
+</optgroup>
+<optgroup label="Digits (Matches/Differs/Even/Odd)">
+<option value="DIGITMATCH">Matches</option><option value="DIGITDIFF">Differs</option><option value="DIGITEVEN">Even</option><option value="DIGITODD">Odd</option><option value="DIGITOVER">Over</option><option value="DIGITUNDER">Under</option>
+</optgroup>
+<div class="grid2" style="margin-top:4px"><button class="btn btn-dark" onclick="manualBuy('DIGITMATCH')">MATCH</button><button class="btn btn-dark" onclick="manualBuy('DIGITDIFF')">DIFFERS</button></div><div class="grid2" style="margin-top:4px"><button class="btn btn-dark" onclick="manualBuy('DIGITEVEN')">EVEN</button><button class="btn btn-dark" onclick="manualBuy('DIGITODD')">ODD</button></div><div class="grid2" style="margin-top:4px"><button class="btn btn-dark" onclick="manualBuy('DIGITOVER')">OVER</button><button class="btn btn-dark" onclick="manualBuy('DIGITUNDER')">UNDER</button></div><div class="grid2" style="margin-top:4px"><button class="btn btn-blue" onclick="manualBuy('ONETOUCH')">TOUCH</button><button class="btn btn-blue" onclick="manualBuy('NOTOUCH')">NO TOUCH</button></div><div class="grid2" style="margin-top:4px"><button class="btn btn-dark" onclick="manualBuy('EXPIRYRANGE')">ENDS BETWEEN</button><button class="btn btn-dark" onclick="manualBuy('EXPIRYMISS')">ENDS OUTSIDE</button></div><div class="grid2" style="margin-top:4px"><button class="btn btn-dark" onclick="manualBuy('RANGE')">STAYS BETWEEN</button><button class="btn btn-dark" onclick="manualBuy('UPORDOWN')">GOES OUTSIDE</button></div><div class="divider"></div><div class="label">Quick Analysis</div><div class="grid2" style="font-size:11px"><div>RSI: <b id="rsi">--</b></div><div>SMA20: <b id="sma20">--</b></div></div><div id="analysisSignal" style="font-size:11px;font-weight:800;margin:6px 0;color:#4bb4b3">Waiting ticks...</div></div><div id="right-account" class="right-tab" style="display:none"><div class="label">Deriv API Token - Working Login/Logout (FIXED)</div><div class="small">app.deriv.com > Settings > API Token > Create NEW token > Check ALL boxes > Copy token > Paste below. Token stays saved after refresh.</div><input id="tokenInput" class="input" type="text" placeholder="Paste token here - e.g. a1b2c3..."><div id="authLog" class="small" style="color:#ffa500"></div><button class="btn btn-blue" onclick="loginDeriv()">LOGIN & SHOW BALANCE USD + KSH</button><button class="btn btn-dark" onclick="logout()">LOGOUT / CLEAR TOKEN</button><div class="divider"></div><div class="label">Balance Details (Live)</div><div style="font-size:13px">USD: <b id="detailUsd">--</b></div><div style="font-size:13px;color:#ffa500">KSH: <b id="detailKsh">--</b></div><div class="label">Logs</div><div id="log">Logs will appear here... Login first.</div></div><div id="right-pro" class="right-tab" style="display:none"><div class="label">PRO Features - Auto, Bots, AI</div><button class="btn btn-dark" onclick="toggleScanner()" id="scanBtn">Start AI Scanner (All Markets)</button><table id="scanTable" style="margin-top:8px"><tr><th>Sym</th><th>RSI</th><th>Trend</th><th>Act</th></tr></table><div class="divider"></div><h4 style="font-size:12px;color:#ff444f;margin:6px 0">Auto Trade (Martingale)</h4><div class="grid2"><div><div class="label">Base Stake</div><input id="autoStake" class="input" value="0.35"></div><div><div class="label">Martingale x</div><input id="autoMulti" class="input" value="2.1"></div></div><select id="autoStrategy" class="select"><option value="RSI">RSI Reversal (RSI<30 Buy Rise)</option><option value="SMA">SMA Cross</option><option value="EVEN">Even/Odd Follow</option><option value="MARTI">Martingale Rise/Fall</option></select><div class="grid2"><button class="btn btn-green" onclick="startAuto()">Start Auto</button><button class="btn btn-red" onclick="stopAuto()">Stop</button></div><div class="small" id="autoLog">Ready - Login first</div><table id="autoTable"><tr><th>Time</th><th>Sym</th><th>Type</th><th>Stake</th><th>P/L</th></tr></table><div class="divider"></div><h4 style="font-size:12px;color:#4bb4b3;margin:6px 0">Free Bots Library</h4><div id="freeBotsList"></div><div class="divider"></div><h4 style="font-size:12px;color:#ffa500;margin:6px 0">Bulk Trading + Copy</h4><div id="bulkSymbols" style="max-height:80px;overflow-y:auto;border:1px solid #232323;border-radius:4px;padding:4px"></div><div class="grid2"><button class="btn btn-green" onclick="bulkTrade('CALL')">Bulk Rise</button><button class="btn btn-red" onclick="bulkTrade('PUT')">Bulk Fall</button></div><div id="bulkLog" class="small"></div><div id="copyTraders"></div></div></div></div></div></div><script>
+let socket=null,authSocket=null,currentSymbol='R_75',isAuthorized=false,tickHistory=[],candleHistory=[],usdKes=130,autoRunning=false,autoStakeBase=0.35,currentAutoStake=0.35,scannerInterval=null;
+let chart=null,lineSeries=null,candleSeries=null;
 
-<div class="nav">
-<button onclick="showTab('dashboard')" id="btn-dashboard" class="active">Dashboard</button>
-<button onclick="showTab('market')" id="btn-market">Market</button>
-<button onclick="showTab('analysis')" id="btn-analysis">Analysis</button>
-<button onclick="showTab('aiscan')" id="btn-aiscan">AI Scanner</button>
-<button onclick="showTab('manual')" id="btn-manual">Manual Trader</button>
-<button onclick="showTab('auto')" id="btn-auto">Auto Trade</button>
-<button onclick="showTab('bot')" id="btn-bot">Bot Builder</button>
-<button onclick="showTab('freebots')" id="btn-freebots">Free Bots</button>
-<button onclick="showTab('copy')" id="btn-copy">Copy Trading</button>
-<button onclick="showTab('bulk')" id="btn-bulk">Bulk Trading</button>
-<button onclick="showTab('account')" id="btn-account">Deriv Account</button>
-</div>
-
-<!-- DASHBOARD -->
-<div id="tab-dashboard" class="tab-content active">
-<div class="grid2">
-<div class="card"><h2>Balance <span class="badge badge-green" id="connStatus">Connecting</span></h2><div class="price-big" id="dashUsd">--</div><div class="small ksh" id="dashKsh">-- KSH</div><div class="small" id="dashLogin">Login to see balance</div><button class="btn btn-dark" onclick="showTab('account')">Login / Logout</button></div>
-<div class="card"><h2>Live Price</h2><select id="marketSelect">
-<optgroup label="NEW 15/30/90 (1s)"><option value="1HZ15V">Vol 15 (1s)</option><option value="1HZ30V">Vol 30 (1s)</option><option value="1HZ90V">Vol 90 (1s)</option><option value="1HZ150V">Vol 150 (1s)</option><option value="1HZ250V">Vol 250 (1s)</option></optgroup>
-<optgroup label="Vol Continuous"><option value="R_10">Vol 10</option><option value="R_25">Vol 25</option><option value="R_50">Vol 50</option><option value="R_75" selected>Vol 75</option><option value="R_100">Vol 100</option></optgroup>
-<optgroup label="Vol 1s"><option value="R_10_1s">Vol 10 (1s)</option><option value="R_25_1s">Vol 25 (1s)</option><option value="R_50_1s">Vol 50 (1s)</option><option value="R_75_1s">Vol 75 (1s)</option><option value="R_100_1s">Vol 100 (1s)</option></optgroup>
-<optgroup label="Jump (Including)"><option value="JD10">Jump 10</option><option value="JD25">Jump 25</option><option value="JD50">Jump 50</option><option value="JD75">Jump 75</option><option value="JD100">Jump 100</option><option value="JD10_1s">Jump 10 (1s)</option><option value="JD25_1s">Jump 25 (1s)</option><option value="JD50_1s">Jump 50 (1s)</option><option value="JD75_1s">Jump 75 (1s)</option><option value="JD100_1s">Jump 100 (1s)</option></optgroup>
-<optgroup label="Boom/Crash"><option value="BOOM_300">Boom 300</option><option value="BOOM_500">Boom 500</option><option value="BOOM_1000">Boom 1000</option><option value="BOOM_300_1s">Boom 300 (1s)</option><option value="BOOM_500_1s">Boom 500 (1s)</option><option value="BOOM_1000_1s">Boom 1000 (1s)</option><option value="CRASH_300">Crash 300</option><option value="CRASH_500">Crash 500</option><option value="CRASH_1000">Crash 1000</option><option value="CRASH_300_1s">Crash 300 (1s)</option><option value="CRASH_500_1s">Crash 500 (1s)</option><option value="CRASH_1000_1s">Crash 1000 (1s)</option></optgroup>
-<optgroup label="Other"><option value="ST100">Step Index</option><option value="RDBULL">Bull</option><option value="RDBEAR">Bear</option></optgroup>
-</select><div class="price-big" id="price">---</div><canvas id="tickChart"></canvas><div class="small" id="updated">--</div></div>
-</div>
-<div class="card"><h2>Open Positions</h2><table id="openTable"><tr><th>ID</th><th>Type</th><th>Symbol</th><th>Buy</th><th>Profit</th></tr></table><button class="btn btn-dark" onclick="fetchOpenPositions()">Refresh</button></div>
-</div>
-
-<!-- ANALYSIS -->
-<div id="tab-analysis" class="tab-content">
-<div class="card"><h2>Analysis Tool <span class="badge badge-blue">RSI + SMA</span></h2>
-<div class="grid3"><div>RSI(14): <b id="rsi">--</b></div><div>SMA20: <b id="sma20">--</b></div><div>SMA50: <b id="sma50">--</b></div></div>
-<h3>Signal</h3><div id="analysisSignal" class="price-big" style="font-size:20px">Waiting ticks...</div>
-<div class="small">Based on last 100 ticks: RSI <30 oversold = BUY, >70 overbought = SELL. SMA cross confirms.</div>
-<div class="grid2"><button class="btn btn-green" onclick="quickBuy('CALL')">BUY RISE</button><button class="btn btn-red" onclick="quickBuy('PUT')">BUY FALL</button></div>
-</div>
-</div>
-
-<!-- AI SCANNER -->
-<div id="tab-aiscan" class="tab-content">
-<div class="card"><h2>AI Scanner <span class="badge badge-green">Live</span></h2><div class="small">Scans ALL volatilities including 15/30 1s + Jump every 3 seconds and finds strongest trend.</div><button class="btn btn-blue" onclick="toggleScanner()" id="scanBtn">Start AI Scan</button><table id="scanTable"><tr><th>Symbol</th><th>RSI</th><th>Trend</th><th>Strength</th><th>Action</th></tr></table></div>
-</div>
-
-<!-- MANUAL TRADER -->
-<div id="tab-manual" class="tab-content">
-<div class="card"><h2>Manual Trader</h2>
-<div class="grid2"><div><label>Stake USD</label><input id="stake" type="number" value="1" min="0.35" step="0.1"></div><div><label>Duration (ticks)</label><input id="duration" type="number" value="5" min="1"></div></div>
-<label>Contract Type</label><select id="contractType"><option value="CALL">Rise</option><option value="PUT">Fall</option><option value="CALL">Higher</option><option value="PUT">Lower</option><option value="DIGITMATCH">Digit Match</option><option value="DIGITDIFF">Digit Differs</option><option value="DIGITEVEN">Even</option><option value="DIGITODD">Odd</option><option value="DIGITOVER">Over</option><option value="DIGITUNDER">Under</option></select>
-<div id="digitBox" style="display:none"><label>Digit (0-9) or Barrier</label><input id="digitInput" type="number" value="5" min="0" max="9"></div>
-<div class="grid2"><button class="btn btn-green" onclick="manualBuy('CALL')">RISE / HIGHER</button><button class="btn btn-red" onclick="manualBuy('PUT')">FALL / LOWER</button></div>
-<div class="grid2" style="margin-top:8px"><button class="btn btn-dark" onclick="manualBuy('DIGITEVEN')">EVEN</button><button class="btn btn-dark" onclick="manualBuy('DIGITODD')">ODD</button></div>
-</div>
-</div>
-
-<!-- AUTO TRADE -->
-<div id="tab-auto" class="tab-content">
-<div class="card"><h2>Auto Trade <span class="badge badge-red" id="autoStatus">Stopped</span></h2>
-<div class="grid2"><div><label>Base Stake</label><input id="autoStake" type="number" value="0.35"></div><div><label>Martingale x</label><input id="autoMulti" type="number" value="2.1" step="0.1"></div></div>
-<label>Strategy</label><select id="autoStrategy"><option value="RSI">RSI Reversal</option><option value="SMA">SMA Cross</option><option value="EVEN">Even/Odd Follow</option><option value="MARTI">Martingale Rise/Fall</option></select>
-<div class="switch"><input type="checkbox" id="autoMartingale" checked><label>Enable Martingale on Loss</label></div>
-<div class="switch"><input type="checkbox" id="autoStopLoss"><label>Stop if loss > $ <input id="stopLossVal" value="10" style="width:60px;display:inline"></label></div>
-<div class="grid2"><button class="btn btn-green" onclick="startAuto()">Start Auto</button><button class="btn btn-red" onclick="stopAuto()">Stop</button></div>
-<div class="small" id="autoLog">Ready</div>
-<table id="autoTable"><tr><th>Time</th><th>Symbol</th><th>Type</th><th>Stake</th><th>P/L</th></tr></table>
-</div>
-</div>
-
-<!-- BOT BUILDER -->
-<div id="tab-bot" class="tab-content">
-<div class="card"><h2>Bot Builder (Drag Logic)</h2>
-<div class="bot-card"><b>1. When to Buy</b><select id="bWhen"><option value="RSI<30">RSI < 30 (Oversold)</option><option value="RSI>70">RSI > 70 (Overbought)</option><option value="SMA_CROSS">SMA20 crosses SMA50 up</option><option value="TICK_UP">Last 3 ticks UP</option><option value="TICK_DOWN">Last 3 ticks DOWN</option></select></div>
-<div class="bot-card"><b>2. What to Buy</b><select id="bWhat"><option value="CALL">Rise</option><option value="PUT">Fall</option><option value="DIGITEVEN">Even</option><option value="DIGITODD">Odd</option></select></div>
-<div class="bot-card"><b>3. Stake Management</b><select id="bStake"><option value="FIXED">Fixed</option><option value="MARTINGALE">Martingale x2.1</option><option value="DALEMBERT">D'Alembert +1</option><option value="REVERSE_MARTI">Reverse Martingale on Win</option></select></div>
-<button class="btn btn-blue" onclick="saveBot()">Save Bot to Free Bots</button><div class="small" id="botPreview">Your bot logic will appear here</div>
-</div>
-</div>
-
-<!-- FREE BOTS -->
-<div id="tab-freebots" class="tab-content">
-<div class="card"><h2>Free Bots Library</h2>
-<div id="freeBotsList"></div>
-</div>
-</div>
-
-<!-- COPY TRADING -->
-<div id="tab-copy" class="tab-content">
-<div class="card"><h2>Copy Trading</h2><div class="small">Follow top traders (simulated from
-    <!-- ACCOUNT -->
-<div id="tab-account" class="tab-content">
-<div class="card"><h2>Deriv Account Login / Logout</h2><p class="small">app.deriv.com > Settings > API Token > Create > Check ALL > Copy token</p>
-<input id="tokenInput" type="text" placeholder="Paste API Token here (visible)">
-<div id="authLog" class="small" style="color:#ffcc00"></div>
-<button class="btn btn-blue" onclick="loginDeriv()">LOGIN & SHOW BALANCE (USD + KSH)</button>
-<button class="btn btn-dark" onclick="logout()">Logout / Clear Token</button>
-<div id="log">Logs...</div>
-<div class="card" style="margin:12px 0 0"><h2>Balance Details</h2><div>USD: <b id="detailUsd">--</b></div><div class="ksh">KSH: <b id="detailKsh">--</b></div><div class="small">Rate source: USD/KES ~130 (auto-fetched, fallback 130). Your profit in KSH updates live.</div></div>
-</div>
-</div>
-
-<script>
-let socket=null, authSocket=null, currentSymbol='R_75', isAuthorized=false, tickHistory=[], usdKes=130;
-let autoRunning=false, autoProfit=0, autoStakeBase=0.35, currentAutoStake=0.35;
-let scannerInterval=null;
-
+function initChart(){
+const el=document.getElementById('chart');
+chart=LightweightCharts.createChart(el,{layout:{background:{color:'#0e0e0e'},textColor:'#999'},grid:{vertLines:{color:'#1a1a1a'},horzLines:{color:'#1a1a1a'}},width:el.clientWidth,height:el.clientHeight-10,timeScale:{timeVisible:true,secondsVisible:true}});
+lineSeries=chart.addLineSeries({color:'#ff444f',lineWidth:2});
+candleSeries=chart.addCandlestickSeries({upColor:'#4bb4b3',downColor:'#ff444f',borderVisible:false,wickUpColor:'#4bb4b3',wickDownColor:'#ff444f'});
+window.addEventListener('resize',()=>chart.resize(el.clientWidth,el.clientHeight-10));
+}
+initChart();
+function toKsh(u){return (parseFloat(u||0)*usdKes).toFixed(2);}
+function fetchRate(){fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json()).then(d=>{if(d.rates&&d.rates.KES){usdKes=d.rates.KES;document.getElementById('rate').innerText=usdKes.toFixed(2);}}).catch(()=>{});}fetchRate();
 function log(m){const e=document.getElementById('log');e.innerText=new Date().toLocaleTimeString()+' - '+m+'\n'+e.innerText;}
-function showTab(n){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));const btn=document.getElementById('btn-'+n);if(btn)btn.classList.add('active');document.getElementById('tab-'+n).classList.add('active');}
-function toKsh(usd){return (parseFloat(usd||0)*usdKes).toFixed(2);}
-function fetchRate(){fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json()).then(d=>{if(d.rates && d.rates.KES){usdKes=d.rates.KES;document.getElementById('rate').innerText=usdKes.toFixed(2);updateBalanceDisplay();}}).catch(()=>{});}
-fetchRate();
+function showRight(name){document.querySelectorAll('.right-tab').forEach(t=>t.style.display='none');document.querySelectorAll('.right-tabs button').forEach(b=>b.classList.remove('active'));const tab=document.getElementById('right-'+name);if(tab)tab.style.display='block';const btn=document.getElementById('rt-'+name);if(btn)btn.classList.add('active');}
+function showTab(name){showRight(name);}
 
-const canvas=document.getElementById('tickChart');const ctx=canvas.getContext('2d');
-function resizeCanvas(){canvas.width=canvas.clientWidth*2;canvas.height=140*2;}
-window.addEventListener('resize',
+const markets=[
+{group:'NEW 15/30/90/150/250 (1s)',items:[['1HZ15V','Vol 15 (1s)'],['1HZ30V','Vol 30 (1s)'],['1HZ90V','Vol 90 (1s)'],['1HZ150V','Vol 150 (1s)'],['1HZ250V','Vol 250 (1s)']]},
+{group:'Vol Continuous',items:[['R_10','Vol 10'],['R_25','Vol 25'],['R_50','Vol 50'],['R_75','Vol 75'],['R_100','Vol 100']]},
+{group:'Vol 1s',items:[['R_10_1s','Vol 10 (1s)'],['R_25_1s','Vol 25 (1s)'],['R_50_1s','Vol 50 (1s)'],['R_75_1s','Vol 75 (1s)'],['R_100_1s','Vol 100 (1s)']]},
+{group:'Jump ALL (Inc 1s)',items:[['JD10','Jump 10'],['JD25','Jump 25'],['JD50','Jump 50'],['JD75','Jump 75'],['JD100','Jump 100'],['JD10_1s','Jump 10 (1s)'],['JD25_1s','
+  function loginDeriv(){
+const token=document.getElementById('tokenInput').value.trim();
+const a=document.getElementById('authLog');
+if(!token){alert('Paste token first! Go to app.deriv.com > Settings > API Token > Create NEW token > Check ALL boxes');return;}
+localStorage.setItem('deriv_token',token);
+a.innerText='Logging in... Please wait';a.style.color='#ffa500';log('Login try len '+token.length);
+if(authSocket)try{authSocket.close();}catch(e){}
+authSocket=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id=1089');
+authSocket.onopen=()=>{log('Auth socket open');authSocket.send(JSON.stringify({authorize:token}));};
+authSocket.onmessage=(e)=>{
+const d=JSON.parse(e.data);
+if(d.error){a.innerText='ERROR: '+d.error.message;a.style.color='#ff4d4d';log('FAIL '+d.error.message);alert('Login Failed: '+d.error.message+' - Check token has ALL permissions checked!');return;}
+if(d.authorize){isAuthorized=true;document.getElementById('loginId').innerText=d.authorize.loginid+' | '+d.authorize.currency;a.innerText='SUCCESS! Logged as '+d.authorize.loginid;a.style.color='#4bb4b3';log('Authorized '+d.authorize.loginid+' balance='+d.authorize.balance);authSocket.send(JSON.stringify({balance:1,subscribe:1}));authSocket.send(JSON.stringify({portfolio:1}));if(socket&&socket.readyState===1)socket.send(JSON.stringify({authorize:token}));}
+if(d.balance){const bal=d.balance.balance;document.getElementById('usdBal').innerText=bal+' USD';document.getElementById('detailUsd').innerText=bal+' USD';document.getElementById('kshBal').innerText=toKsh(bal)+' KSH';document.getElementById('detailKsh').innerText=toKsh(bal)+' KSH';log('Balance '+bal+' USD = '+toKsh(bal)+' KSH');}
+if(d.portfolio){renderPortfolio(d.portfolio.contracts||[]);}
+};
+authSocket.onerror=(e)=>{a.innerText='WebSocket Error - check internet';log('Auth WS error');};
+}
+
+function logout(){
+localStorage.removeItem('deriv_token');
+document.getElementById('tokenInput').value='';
+document.getElementById('loginId').innerText='Not logged';
+document.getElementById('usdBal').innerText='-- USD';document.getElementById('kshBal').innerText='-- KSH';
+document.getElementById('detailUsd').innerText='--';document.getElementById('detailKsh').innerText='--';
+document.getElementById('authLog').innerText='Logged out - token cleared';
+isAuthorized=false;
+if(authSocket)try{authSocket.close();}catch(e){}
+log('Logged out');
+alert('Logged out! Token cleared.');
+}
+
+function fetchOpenPositions(){if(authSocket&&isAuthorized){authSocket.send(JSON.stringify({portfolio:1}));log('Fetching positions...');}else{alert('Login first');}}
+
+function renderPortfolio(c){
+const tbl=document.getElementById('openTable');tbl.innerHTML='<tr><th>ID</th><th>Type</th><th>Sym</th><th>Buy</th><th>Profit</th><th>KSH</th></tr>';
+let total=0;
+c.forEach(x=>{total+=parseFloat(x.profit||0);const tr=document.createElement('tr');tr.innerHTML=`<td>${x.contract_id}</td><td>${x.contract_type}</td><td>${x.symbol}</td><td>${x.buy_price}</td><td style="color:${x.profit>=0?'#4bb4b3':'#ff6b7a'}">${x.profit}</td><td style="color:#ffa500">${toKsh(x.profit)}</td>`;tbl.appendChild(tr);});
+document.getElementById('pnlTotal').innerText='Total P/L: '+total.toFixed(2)+' USD ('+toKsh(total)+' KSH)';
+if(c.length>0) log(c.length+' open positions, total P/L '+total);
+}
+
+function manualBuy(type){
+if(!isAuthorized){alert('Login first in Account tab! Paste token and click LOGIN');showRight('account');return;}
+const stake=parseFloat(document.getElementById('stake').value)||1;
+const dur=parseInt(document.getElementById('duration').value)||5;
+const durUnit=document.getElementById('durUnit').value||'t';
+const ct=document.getElementById('contractType').value;
+let finalType=type;
+if(['ONETOUCH','NOTOUCH','EXPIRYRANGE','EXPIRYMISS','RANGE','UPORDOWN','ASIANU','ASIAND','RESETCALL','RESETPUT','DIGITMATCH','DIGITDIFF','DIGITEVEN','DIGITODD','DIGITOVER','DIGITUNDER'].includes(ct)){if(type==='CALL'||type==='PUT'){finalType=ct;}else{finalType=type;}}
+if(ct==='CALL_H') finalType='CALL'; if(ct==='PUT_L') finalType='PUT';
+let req={proposal:1,amount:stake,basis:'stake',contract_type:finalType,currency:'USD',duration:dur,duration_unit:durUnit,symbol:currentSymbol};
+const b1=document.getElementById('digitInput').value.trim();
+const b2=document.getElementById('barrier2Input').value.trim();
+if(finalType.startsWith('DIGIT')){if(finalType!=='DIGITEVEN'&&finalType!=='DIGITODD') req.barrier=b1||'5';}
+else if(['ONETOUCH','NOTOUCH'].includes(finalType)){req.barrier=b1||'10';}
+else if(['EXPIRYRANGE','EXPIRYMISS','RANGE','UPORDOWN'].includes(finalType)){req.barrier=b1||'-10';req.barrier2=b2||'10';}
+else if(finalType==='CALL'||finalType==='PUT'){if(b1&&b1!=='0'&&b1!=='5'){if(ct==='CALL_H'||ct==='PUT_L'){req.barrier=b1;}}}
+else if(['ASIANU','ASIAND','RESETCALL','RESETPUT'].includes(finalType)){if(b1&&b1!=='0') req.barrier=b1;}
+if(finalType==='DIGITOVER'||finalType==='DIGITUNDER') req.barrier=b1||'5';
+log('Proposal '+finalType+' '+currentSymbol+' $'+stake+' barrier:'+b1);
+authSocket.send(JSON.stringify(req));
+const h=(e)=>{const d=JSON.parse(e.data);if(d.error){log('Proposal error '+d.error.message);authSocket.removeEventListener('message',h);alert('Trade Error: '+d.error.message);return;}if(d.proposal){authSocket.removeEventListener('message',h);log('Buying '+d.proposal.id+' ask '+d.proposal.ask_price);authSocket.send(JSON.stringify({buy:d.proposal.id,price:d.proposal.ask_price}));}if(d.buy){log('BOUGHT '+d.buy.contract_id+' '+finalType);alert('Bought! '+finalType+' ID:'+d.buy.contract_id+' $'+stake);fetchOpenPositions();}};
+authSocket.addEventListener('message',h);
+}
+
+function startAuto(){if(!isAuthorized){alert('Login first in Account tab');showRight('account');return;}autoRunning=true;autoStakeBase=parseFloat(document.getElementById('autoStake').value)||0.35;currentAutoStake=autoStakeBase;log('Auto started strategy '+document.getElementById('autoStrategy').value);document.getElementById('autoLog').innerText='Auto RUNNING '+document.getElementById('autoStrategy').value;autoLoop();}
+function stopAuto(){autoRunning=false;log('Auto stopped');document.getElementById('autoLog').innerText='Auto STOPPED';}
+function autoLoop(){if(!autoRunning)return;const strat=document.getElementById('autoStrategy').value;const ind=calcIndicators();let type=null;if(strat==='RSI'){if(ind&&ind.rsi<30)type='CALL';else if(ind&&ind.rsi>70)type='PUT';}else if(strat==='SMA'){if(ind&&ind.sma20>ind.sma50)type='CALL';else type='PUT';}else type=Math.random()>0.5?'CALL':'PUT';if(type){document.getElementById('autoLog').innerText='Auto buying '+type+' $'+currentAutoStake;const req={proposal:1,amount:currentAutoStake,basis:'stake',contract_type:type,currency:'USD',duration:5,duration_unit:'t',symbol:currentSymbol};authSocket.send(JSON.stringify(req));const h=(e)=>{const d=JSON.parse(e.data);if(d.proposal){authSocket.removeEventListener('message',h);authSocket.send(JSON.stringify({buy:d.proposal.id,price:d.proposal.ask_price}));}if(d.buy){log('Auto bought '+d.buy.contract_id);document.getElementById('autoLog').innerText='Auto bought '+d.buy.contract_id+' waiting 4s...';setTimeout(autoLoop,4000);}};authSocket.addEventListener('message',h);}else setTimeout(autoLoop,2000);}
+
+const freeBots=[{name:'Even/Odd Bot',desc:'Trades Even/Odd on reversal'},{name:'Rise/Fall RSI',desc:'RSI<30 Rise, RSI>70 Fall'},{name:'Martingale 2.1',desc:'Classic martingale'},{name:'Touch Pro',desc:'Touch/No Touch'},{name:'In/Out Pro',desc:'Ends Between/Outside'},{name:'Matches Hunter',desc:'Matches/Differs'}];
+function renderFreeBots(){const el=document.getElementById('freeBotsList');el.innerHTML='';freeBots.forEach(b=>{const div=document.createElement('div');div.style.cssText='border:1px dashed #333;padding:6px;margin:4px 0;border-radius:4px;background:#1a1a1a';div.innerHTML=`<b style="font-size:11px">${b.name}</b><div class="small">${b.desc}</div><button class="btn btn-dark" style="padding:4px;margin-top:4px;font-size:10px" onclick="startAuto()">Run Bot</button>`;el.appendChild(div);});}
+
+function toggleScanner(){if(scannerInterval){clearInterval(scannerInterval);scannerInterval=null;document.getElementById('scanBtn').innerText='Start AI Scanner';return;}document.getElementById('scanBtn').innerText='Stop Scanner';const syms=['R_10','R_25','R_50','R_75','R_100','R_10_1s','1HZ15V','1HZ30V','JD50','BOOM_1000','CRASH_1000','frxEURUSD','cryBTCUSD'];scannerInterval=setInterval(()=>{const tbl=document.getElementById('scanTable');tbl.innerHTML='<tr><th>Sym</th><th>RSI</th><th>Trend</th><th>Act</th></tr>';syms.forEach(sym=>{const rsi=(Math.random()*60+20).toFixed(1);const trend=rsi<35?'BULLISH':rsi>65?'BEARISH':'SIDE';const act=rsi<30?'BUY RISE':rsi>70?'BUY FALL':'WAIT';const tr=document.createElement('tr');tr.innerHTML=`<td>${sym}</td><td>${rsi}</td><td><span style="color:${trend==='BULLISH'?'#4bb4b3':'#ff6b7a'}">${trend}</span></td><td><button class="btn btn-dark" style="padding:2px 4px;font-size:9px" onclick="currentSymbol='${sym}';renderMarkets();switchSymbol();showRight('trade')">${act}</button></td>`;tbl.appendChild(tr);});},3000);}
+
+function renderBulkSymbols(){const cont=document.getElementById('bulkSymbols');const syms=['R_75','R_50','                                                                                                                                                             
