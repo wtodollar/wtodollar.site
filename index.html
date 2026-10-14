@@ -3,397 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>WTOdollar.site | Deriv Trading</title>
-
+<title>WTOdollar.site | Deriv Trading Analysis</title>
 <style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: #101418;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
-}
-
-header {
-    padding: 20px;
-    background: #171e24;
-    border-bottom: 2px solid #20c997;
-}
-
-header h1 {
-    margin: 0;
-    color: #20c997;
-}
-
-header p {
-    color: #b7c0c8;
-}
-
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px;
-    background: #171e24;
-}
-
-button, select, input {
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #35434c;
-}
-
-button {
-    background: #20c997;
-    color: #101418;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-main {
-    padding: 15px;
-    max-width: 1000px;
-    margin: auto;
-}
-
-.card {
-    background: #1b242c;
-    border: 1px solid #35434c;
-    border-radius: 10px;
-    padding: 18px;
-    margin-bottom: 16px;
-}
-
-h2 {
-    color: #20c997;
-}
-
-.price {
-    font-size: 30px;
-    font-weight: bold;
-    overflow-wrap: anywhere;
-}
-
-.muted {
-    color: #b7c0c8;
-}
-
-.status {
-    color: #20c997;
-}
-
-input, select {
-    max-width: 100%;
-    background: #101418;
-    color: white;
-    margin: 5px 0;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #b7c0c8;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0e1318;color:#fff;font-family:system-ui,Arial,sans-serif;padding:0}
+.header{padding:20px 16px 12px;background:#0e1318;border-bottom:2px solid #00d091}
+.header h1{color:#00d091;font-size:38px;letter-spacing:0.5px;margin-bottom:8px}
+.header p{color:#9fb0c3;font-size:16px;margin:6px 0}
+.nav{display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;background:#0e1318}
+.nav button{background:#00d091;color:#0e1318;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}
+.nav button.active{background:#fff;color:#0e1318}
+.card{background:#1a222d;border-radius:14px;padding:18px;margin:16px;border:1px solid #263241}
+.card h2{color:#00d091;font-size:24px;margin-bottom:16px}
+label{color:#cbd6e2;font-size:15px;display:block;margin-bottom:8px}
+select,input{width:100%;background:#0e1318;color:#fff;border:1px solid #3a4a5e;border-radius:8px;padding:12px;font-size:15px;margin-bottom:14px}
+.status-line{margin:6px 0;color:#cbd6e2}
+.status-line span{color:#00d091;font-weight:600}
+.price-big{font-size:42px;font-weight:800;margin:10px 0;letter-spacing:1px}
+.updated{color:#8da0b6;font-size:14px;margin-bottom:14px}
+.btn-reconnect{background:#00d091;color:#0e1318;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.small{font-size:12px;color:#8da0b6;margin-top:8px}
+.btn-blue{background:#2a86ff;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:700;width:100%;cursor:pointer;margin-top:8px}
+.balance{font-size:22px;color:#00d091;font-weight:800;margin-top:12px}
+#log{background:#000;border-radius:8px;padding:8px;height:100px;overflow-y:auto;font-size:11px;margin-top:10px}
 </style>
 </head>
-
 <body>
-
-<header>
-    <h1>WTOdollar.site</h1>
-    <p>Your Deriv Trading Analysis Platform</p>
-    <p>Market data • Analysis • Bot Builder</p>
-</header>
-
-<nav>
-    <button onclick="showSection('analysis')">Market</button>
-    <button onclick="showSection('signals')">Signals</button>
-    <button onclick="showSection('bots')">Bot Builder</button>
-    <button onclick="showSection('account')">Deriv Account</button>
-</nav>
-
-<main>
-
-<section id="analysis" class="card">
-    <h2>Live Market Analysis</h2>
-
-    <label for="market">Select market:</label>
-    <br>
-
-    <select id="market" onchange="changeMarket()">
-        <option value="R_100">Volatility 100 Index</option>
-        <option value="R_75">Volatility 75 Index</option>
-        <option value="R_50">Volatility 50 Index</option>
-        <option value="R_25">Volatility 25 Index</option>
-        <option value="R_10">Volatility 10 Index</option>
-    </select>
-
-    <p>Connection:
-        <span id="connection" class="status">
-            Connecting...
-        </span>
-    </p>
-
-    <p>Current price:</p>
-    <div id="livePrice" class="price">Waiting for data...</div>
-
-    <p id="lastUpdate" class="muted"></p>
-
-    <button onclick="connectToDeriv()">Reconnect</button>
-
-    <p class="muted">
-        Live quotes are market information, not a guarantee
-        of future price movements.
-    </p>
-</section>
-
-<section id="signals" class="card">
-    <h2>Trading Analysis</h2>
-
-    <p>Selected market:
-        <span id="signalMarket">Volatility 100 Index</span>
-    </p>
-
-    <p>Latest price:
-        <span id="signalPrice">Waiting for data...</span>
-    </p>
-
-    <p id="signalInfo" class="muted">
-        Waiting for enough market data to analyse prices.
-    </p>
-
-    <p class="muted">
-        Rise/Fall and Over/Under analysis will be developed
-        in the next stage. No trading signal is guaranteed.
-    </p>
-</section>
-
-<section id="bots" class="card">
-    <h2>Bot Builder</h2>
-
-    <p>Configure your planned trading strategy.</p>
-
-    <label for="stake">Stake amount:</label>
-    <br>
-    <input id="stake" type="number"
-           min="0.35" step="0.01" value="1">
-
-    <br>
-
-    <label for="contract">Contract type:</label>
-    <br>
-
-    <select id="contract">
-        <option value="CALL">Rise</option>
-        <option value="PUT">Fall</option>
-    </select>
-
-    <br><br>
-
-    <button onclick="configureBot()">
-        Save Demo Configuration
-    </button>
-
-    <p id="botStatus" class="muted">
-        No configuration saved.
-    </p>
-
-    <p class="muted">
-        This is a configuration demonstration only.
-        It does not place trades or run an automated bot.
-    </p>
-</section>
-
-<section id="account" class="card">
-    <h2>Connect Deriv Account</h2>
-
-    <p>
-        Secure account authorization will be added in a
-        later stage using the official Deriv authentication flow.
-    </p>
-
-    <p class="muted">
-        Never enter your Deriv password or private API token
-        into this public webpage.
-    </p>
-</section>
-
-</main>
-
-<footer>
-    WTOdollar.site &copy; 2026
-    <p>Trade responsibly. Protect your capital.</p>
-</footer>
-
+<div class="header">
+<h1>WTOdollar.site</h1>
+<p>Your Deriv Trading Analysis Platform</p>
+<p>Market data • Analysis • Bot Builder</p>
+</div>
+<div class="nav">
+<button onclick="showTab('market')" id="btn-market" class="active">Market</button>
+<button onclick="showTab('signals')" id="btn-signals">Signals</button>
+<button onclick="showTab('bot')" id="btn-bot">Bot Builder</button>
+<button onclick="showTab('account')" id="btn-account">Deriv Account</button>
+</div>
+<div id="tab-market" class="tab-content active">
+<div class="card">
+<h2>Live Market Analysis</h2>
+<label>Select market:</label>
+<select id="marketSelect">
+<option value="R_75">Volatility 75 Index</option>
+<option value="R_100">Volatility 100 Index</option>
+<option value="R_50">Volatility 50 Index</option>
+<option value="R_25">Volatility 25 Index</option>
+<option value="frxEURUSD">EUR/USD</option>
+<option value="frxGBPUSD">GBP/USD</option>
+<option value="BOOM1000">Boom 1000 Index</option>
+<option value="CRASH1000">Crash 1000 Index</option>
+</select>
+<div class="status-line">Connection: <span id="connStatus">Connecting...</span></div>
+<div class="status-line">Current price:</div>
+<div class="price-big" id="price">---</div>
+<div class="updated" id="updated">Updated: --</div>
+<button class="btn-reconnect" onclick="reconnect()">Reconnect</button>
+<div class="small" id="proposalInfo"></div>
+</div>
+<div class="card">
+<h2>Quick Trade</h2>
+<div style="display:flex;gap:10px">
+<input id="stake" type="number" value="1" min="0.35" step="0.1" placeholder="Stake">
+<input id="duration" type="number" value="1" min="1" placeholder="Ticks">
+</div>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button class="btn-blue" style="background:#00d091;color:#000" onclick="quickBuy('CALL')">RISE ▲</button>
+<button class="btn-blue" style="background:#ff4d4d" onclick="quickBuy('PUT')">FALL ▼</button>
+</div>
+<div class="small">Requires login in Deriv Account tab first</div>
+</div>
+</div>
+<div id="tab-account" class="tab-content">
+<div class="card">
+<h2>Deriv Account</h2>
+<p class="small">Go to app.deriv.com > Account Settings > API Token > Create New Token > Check Read + Trade > Copy</p>
+<input id="tokenInput" type="password" placeholder="Paste your API Token here">
+<button class="btn-blue" onclick="loginDeriv()">LOGIN & SHOW BALANCE</button>
+<div id="loginId" style="margin-top:14px;font-weight:700"></div>
+<div id="balanceDisplay" class="balance"></div>
+<div id="authLog" class="small"></div>
+<button class="btn-blue" style="background:#263241;margin-top:12px" onclick="logout()">Logout / Clear Token</button>
+<div id="log"></div>
+</div>
+</div>
+<div id="tab-signals" class="tab-content">
+<div class="card"><h2>Signals</h2><p class="small">Analysis engine coming soon. Using live price from Market tab.</p><div id="signalBox" class="small">Waiting for data...</div></div>
+</div>
+<div id="tab-bot" class="tab-content">
+<div class="card"><h2>Bot Builder</h2><p class="small">Your bot will use the same Deriv connection. Login first.</p></div>
+</div>
 <script>
-let socket = null;
-let reconnectTimer = null;
-let selectedSymbol = "R_100";
-let lastQuote = null;
-let previousQuote = null;
-let reconnectAttempts = 0;
-
-const marketNames = {
-    R_100: "Volatility 100 Index",
-    R_75: "Volatility 75 Index",
-    R_50: "Volatility 50 Index",
-    R_25: "Volatility 25 Index",
-    R_10: "Volatility 10 Index"
-};
-
-function showSection(id) {
-    document.getElementById(id).scrollIntoView({
-        behavior: "smooth"
-    });
-}
-
-function updateStatus(message) {
-    document.getElementById("connection").textContent =
-        message;
-}
-
-function connectToDeriv() {
-    clearTimeout(reconnectTimer);
-
-    if (socket) {
-        socket.onclose = null;
-        socket.close();
-    }
-
-    updateStatus("Connecting...");
-    document.getElementById("livePrice").textContent =
-        "Waiting for data...";
-
-    /*
-     * Public market-data connection.
-     * No account token is required for public quotes.
-     */
-    socket = new WebSocket(
-        "wss://api.derivws.com/trading/v1/options/ws/public"
-    );
-
-    socket.onopen = function() {
-        reconnectAttempts = 0;
-        updateStatus("Connected; requesting market data...");
-
-        socket.send(JSON.stringify({
-            ticks: selectedSymbol,
-            subscribe: 1
-        }));
-    };
-
-    socket.onmessage = function(event) {
-        let data;
-
-        try {
-            data = JSON.parse(event.data);
-        } catch (error) {
-            updateStatus("Could not read server response.");
-            return;
-        }
-
-        if (data.error) {
-            updateStatus("API error: " + data.error.message);
-            return;
-        }
-
-        if (data.tick) {
-            const quote = Number(data.tick.quote);
-
-            if (!Number.isFinite(quote)) {
-                return;
-            }
-
-            previousQuote = lastQuote;
-            lastQuote = quote;
-
-            document.getElementById("livePrice").textContent =
-                quote.toFixed(
-                    Number.isInteger(quote) ? 0 : 4
-                );
-
-            document.getElementById("signalPrice").textContent =
-                quote;
-
-            document.getElementById("lastUpdate").textContent =
-                "Updated: " +
-                new Date().toLocaleTimeString();
-
-            document.getElementById("signalMarket").textContent =
-                marketNames[selectedSymbol];
-
-            document.getElementById("signalInfo").textContent =
-                previousQuote === null
-                ? "Collecting prices for analysis."
-                : quote > previousQuote
-                    ? "The latest tick rose. One tick alone is not a reliable signal."
-                    : quote < previousQuote
-                        ? "The latest tick fell. One tick alone is not a reliable signal."
-                        : "The latest tick is unchanged.";
-
-            updateStatus("Receiving live prices");
-        }
-    };
-
-    socket.onerror = function() {
-        updateStatus("Connection error. Check your internet.");
-    };
-
-    socket.onclose = function() {
-        updateStatus("Disconnected");
-
-        if (reconnectAttempts < 5) {
-            reconnectAttempts++;
-
-            reconnectTimer = setTimeout(
-                connectToDeriv,
-                Math.min(2000 * reconnectAttempts, 10000)
-            );
-        }
-    };
-}
-
-function changeMarket() {
-    selectedSymbol =
-        document.getElementById("market").value;
-
-    lastQuote = null;
-    previousQuote = null;
-
-    document.getElementById("signalMarket").textContent =
-        marketNames[selectedSymbol];
-
-    connectToDeriv();
-}
-
-function configureBot() {
-    const stake = Number(
-        document.getElementById("stake").value
-    );
-
-    const contract =
-        document.getElementById("contract").value;
-
-    const status =
-        document.getElementById("botStatus");
-
-    if (!Number.isFinite(stake) || stake <= 0) {
-        status.textContent = "Enter a valid stake amount.";
-        return;
-    }
-
-    status.textContent =
-        "Demo configuration saved: " + contract +
-        ", stake " + stake +
-        ". No trade was placed.";
-}
-
-connectToDeriv();
+let socket;let currentSymbol='R_75';let lastPrice=null;let isAuthorized=false;
+function log(msg){const el=document.getElementById('log');if(el)el.innerHTML=new Date().toLocaleTimeString()+' - '+msg+'<br>'+el.innerHTML;}
+function showTab(name){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');document.getElementById('btn-'+name).classList.add('active');}
+function connect(){const APP_ID=1089;socket=new WebSocket('wss://ws.derivws.com/websockets/v3?app_id='+APP_ID);document.getElementById('connStatus').innerText='Connecting...';socket.onopen=()=>{document.getElementById('connStatus').innerText='Receiving live prices';log('Connected');subscribe(currentSymbol);const saved=localStorage.getItem('deriv_token');if(saved){socket.send(JSON.stringify({authorize:saved}));}};socket.onmessage=(msg)=>{const data=JSON.parse(msg.data);if(data.error){log('Error: '+data.error.message);document.getElementById('authLog').innerText=data.error.message;return;}if(data.tick){lastPrice=data.tick.quote;document.getElementById('price').innerText=lastPrice;document.getElementById('updated').innerText='Updated: '+new Date().toLocaleTimeString();const box=document.getElementById('signalBox');if(box)box.innerText='Last tick: '+lastPrice;}if(data.authorize){isAuthorized=true;document.getElementById('loginId').innerText='Logged in: '+data.authorize.loginid+' ('+data.authorize.currency+')';document.getElementById('authLog').innerText='Authorized! Fetching balance...';log('Authorized '+data.authorize.loginid);socket.send(JSON.stringify({balance:1,subscribe:1}));}if(data.balance){document.getElementById('balanceDisplay').innerText='Balance: '+data.balance.balance+' '+data.balance.currency;}if(data.proposal){document.getElementById('proposalInfo').innerText='Proposal ready: Payout '+data.proposal.display_value;window._lastProposal=data.proposal;}if(data.buy){log('BOUGHT! ID:'+data.buy.contract_id+' Price:'+data.buy.buy_price);alert('Trade bought! Contract ID: '+data.buy.contract_id);}};socket.onclose=()=>{document.getElementById('connStatus').innerText='Disconnected - Reconnecting...';setTimeout(connect,3000);};}function subscribe(symbol){currentSymbol=symbol;if(!socket||socket.readyState!==1)return;socket.send(JSON.stringify({forget_all:['ticks']}));socket.send(JSON.stringify({ticks:symbol,subscribe:1}));log('Subscribing '+symbol);}function reconnect(){if(socket)socket.close();connect();}function loginDeriv(){const token=document.getElementById('tokenInput').value.trim();if(!token){alert('Paste token');return;}localStorage.setItem('deriv_token',token);if(socket&&socket.readyState===1){socket.send(JSON.stringify({authorize:token}));document.getElementById('authLog').innerText='Logging in...';}else{connect();setTimeout(()=>{socket.send(JSON.stringify({authorize:token}));},1000);}}function logout(){localStorage.removeItem('deriv_token');document.getElementById('tokenInput').value='';document.getElementById('loginId').innerText='';document.getElementById('balanceDisplay').innerText='Logged out';log('Logged out');isAuthorized=false;}function quickBuy(type){if(!isAuthorized){alert('Please login in Deriv Account tab first');showTab('account');return;}const stake=parseFloat(document.getElementById('stake').value)||1;const dur=parseInt(document.getElementById('duration').value)||1;socket.send(JSON.stringify({proposal:1,amount:stake,basis:'stake',contract_type:type,currency:'USD',duration:dur,duration_unit:'t',symbol:currentSymbol}));const listener=(e)=>{const d=JSON.parse(e.data);if(d.proposal&&d.proposal.contract_type===type){socket.removeEventListener('message',listener);socket.send(JSON.stringify({buy:d.proposal.id,price:d.proposal.ask_price}));}};socket.addEventListener('message',listener);}document.getElementById('marketSelect').addEventListener('change',(e)=>subscribe(e.target.value));document.getElementById('tokenInput').value=localStorage.getItem('deriv_token')||'';connect();
 </script>
-
 </body>
-</html>
+    </html>
