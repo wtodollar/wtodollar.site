@@ -1,17 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>WTOdollar.site | Deriv Trading</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #101418;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    padding: 20px;
+    background: #171e24;
+    border-bottom: 2px solid #20c997;
+}
+
+header h1 {
+    margin: 0;
+    color: #20c997;
+}
+
+header p {
+    color: #b7c0c8;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: #171e24;
+}
+
+button, select, input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #35434c;
+}
+
+button {
+    background: #20c997;
+    color: #101418;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+main {
+    padding: 15px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.card {
+    background: #1b242c;
+    border: 1px solid #35434c;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+h2 {
+    color: #20c997;
+}
+
+.price {
+    font-size: 30px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.muted {
+    color: #b7c0c8;
+}
+
+.status {
+    color: #20c997;
+}
+
+input, select {
+    max-width: 100%;
+    background: #101418;
+    color: white;
+    margin: 5px 0;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #b7c0c8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>WTOdollar.site</h1>
+    <p>Your Deriv Trading Analysis Platform</p>
+    <p>Market data • Analysis • Bot Builder</p>
+</header>
+
+<nav>
+    <button onclick="showSection('analysis')">Market</button>
+    <button onclick="showSection('signals')">Signals</button>
+    <button onclick="showSection('bots')">Bot Builder</button>
+    <button onclick="showSection('account')">Deriv Account</button>
+</nav>
+
+<main>
+
 <section id="analysis" class="card">
-    <h2>Market Analysis</h2>
+    <h2>Live Market Analysis</h2>
 
-    <p>Market: Volatility 100 Index</p>
+    <label for="market">Select market:</label>
+    <br>
 
-    <p>
-        Connection:
-        <span id="connection">Connecting...</span>
+    <select id="market" onchange="changeMarket()">
+        <option value="R_100">Volatility 100 Index</option>
+        <option value="R_75">Volatility 75 Index</option>
+        <option value="R_50">Volatility 50 Index</option>
+        <option value="R_25">Volatility 25 Index</option>
+        <option value="R_10">Volatility 10 Index</option>
+    </select>
+
+    <p>Connection:
+        <span id="connection" class="status">
+            Connecting...
+        </span>
     </p>
 
-    <h3>
-        Live Price:
-        <span id="livePrice">Waiting for data...</span>
-    </h3>
+    <p>Current price:</p>
+    <div id="livePrice" class="price">Waiting for data...</div>
 
     <p id="lastUpdate" class="muted"></p>
+
+    <button onclick="connectToDeriv()">Reconnect</button>
+
+    <p class="muted">
+        Live quotes are market information, not a guarantee
+        of future price movements.
+    </p>
 </section>
+
+<section id="signals" class="card">
+    <h2>Trading Analysis</h2>
+
+    <p>Selected market:
+        <span id="signalMarket">Volatility 100 Index</span>
+    </p>
+
+    <p>Latest price:
+        <span id="signalPrice">Waiting for data...</span>
+    </p>
+
+    <p id="signalInfo" class="muted">
+        Waiting for enough market data to analyse prices.
+    </p>
+
+    <p class="muted">
+        Rise/Fall and Over/Under analysis will be developed
+        in the next stage. No trading signal is guaranteed.
+    </p>
+</section>
+
+<section id="bots" class="card">
+    <h2>Bot Builder</h2>
+
+    <p>Configure your planned trading strategy.</p>
+
+    <label for="stake">Stake amount:</label>
+    <br>
+    <input id="stake" type="number"
+           min="0.35" step="0.01" value="1">
+
+    <br>
+
+    <label for="contract">Contract type:</label>
+    <br>
+
+    <select id="contract">
+        <option value="CALL">Rise</option>
+        <option value="PUT">Fall</option>
+    </select>
+
+    <br><br>
+
+    <button onclick="configureBot()">
+        Save Demo Configuration
+    </button>
+
+    <p id="botStatus" class="muted">
+        No configuration saved.
+    </p>
+
+    <p class="muted">
+        This is a configuration demonstration only.
+        It does not place trades or run an automated bot.
+    </p>
+</section>
+
+<section id="account" class="card">
+    <h2>Connect Deriv Account</h2>
+
+    <p>
+        Secure account authorization will be added in a
+        later stage using the official Deriv authentication flow.
+    </p>
+
+    <p class="muted">
+        Never enter your Deriv password or private API token
+        into this public webpage.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    WTOdollar.site &copy; 2026
+    <p>Trade responsibly. Protect your capital.</p>
+</footer>
+
+<script>
+let socket = null;
+let reconnectTimer = null;
+let selectedSymbol = "R_100";
+let lastQuote = null;
+let previousQuote = null;
+let reconnectAttempts = 0;
+
+const marketNames = {
+    R_100: "Volatility 100 Index",
+    R_75: "Volatility 75 Index",
+    R_50: "Volatility 50 Index",
+    R_25: "Volatility 25 Index",
+    R_10: "Volatility 10 Index"
+};
+
+function showSection(id) {
+    document.getElementById(id).scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function updateStatus(message) {
+    document.getElementById("connection").textContent =
+        message;
+}
+
+function connectToDeriv() {
+    clearTimeout(reconnectTimer);
+
+    if (socket) {
+        socket.onclose = null;
+        socket.close();
+    }
+
+    updateStatus("Connecting...");
+    document.getElementById("livePrice").textContent =
+        "Waiting for data...";
+
+    /*
+     * Public market-data connection.
+     * No account token is required for public quotes.
+     */
+    socket = new WebSocket(
+        "wss://api.derivws.com/trading/v1/options/ws/public"
+    );
+
+    socket.onopen = function() {
+        reconnectAttempts = 0;
+        updateStatus("Connected; requesting market data...");
+
+        socket.send(JSON.stringify({
+            ticks: selectedSymbol,
+            subscribe: 1
+        }));
+    };
+
+    socket.onmessage = function(event) {
+        let data;
+
+        try {
+            data = JSON.parse(event.data);
+        } catch (error) {
+            updateStatus("Could not read server response.");
+            return;
+        }
+
+        if (data.error) {
+            updateStatus("API error: " + data.error.message);
+            return;
+        }
+
+        if (data.tick) {
+            const quote = Number(data.tick.quote);
+
+            if (!Number.isFinite(quote)) {
+                return;
+            }
+
+            previousQuote = lastQuote;
+            lastQuote = quote;
+
+            document.getElementById("livePrice").textContent =
+                quote.toFixed(
+                    Number.isInteger(quote) ? 0 : 4
+                );
+
+            document.getElementById("signalPrice").textContent =
+                quote;
+
+            document.getElementById("lastUpdate").textContent =
+                "Updated: " +
+                new Date().toLocaleTimeString();
+
+            document.getElementById("signalMarket").textContent =
+                marketNames[selectedSymbol];
+
+            document.getElementById("signalInfo").textContent =
+                previousQuote === null
+                ? "Collecting prices for analysis."
+                : quote > previousQuote
+                    ? "The latest tick rose. One tick alone is not a reliable signal."
+                    : quote < previousQuote
+                        ? "The latest tick fell. One tick alone is not a reliable signal."
+                        : "The latest tick is unchanged.";
+
+            updateStatus("Receiving live prices");
+        }
+    };
+
+    socket.onerror = function() {
+        updateStatus("Connection error. Check your internet.");
+    };
+
+    socket.onclose = function() {
+        updateStatus("Disconnected");
+
+        if (reconnectAttempts < 5) {
+            reconnectAttempts++;
+
+            reconnectTimer = setTimeout(
+                connectToDeriv,
+                Math.min(2000 * reconnectAttempts, 10000)
+            );
+        }
+    };
+}
+
+function changeMarket() {
+    selectedSymbol =
+        document.getElementById("market").value;
+
+    lastQuote = null;
+    previousQuote = null;
+
+    document.getElementById("signalMarket").textContent =
+        marketNames[selectedSymbol];
+
+    connectToDeriv();
+}
+
+function configureBot() {
+    const stake = Number(
+        document.getElementById("stake").value
+    );
+
+    const contract =
+        document.getElementById("contract").value;
+
+    const status =
+        document.getElementById("botStatus");
+
+    if (!Number.isFinite(stake) || stake <= 0) {
+        status.textContent = "Enter a valid stake amount.";
+        return;
+    }
+
+    status.textContent =
+        "Demo configuration saved: " + contract +
+        ", stake " + stake +
+        ". No trade was placed.";
+}
+
+connectToDeriv();
+</script>
+
+</body>
+</html>
